@@ -1,0 +1,49 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build and test with Maven
+        run: mvn -B clean package
+        env:
+          SPRING_DATA_MONGODB_URI: mongodb://root:example@localhost:27017/coupon?authSource=admin
+
+      - name: Generate API documentation
+        run: |
+          mkdir -p docs
+          nohup mvn spring-boot:run &
+          sleep 120
+          curl -s http://localhost:8080/v3/api-docs > docs/openapi.json
+          pkill -f 'java.*spring-boot'
+
+      - name: Upload API documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-docs
+          path: docs/openapi.json
