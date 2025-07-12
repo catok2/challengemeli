@@ -1,10 +1,7 @@
-package com.challange.coupon.config;
+package com.challange.coupon.infrastructure.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import org.springdoc.webmvc.ui.SwaggerIndexTransformer;
-import org.springdoc.webmvc.ui.SwaggerWelcomeCommon;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

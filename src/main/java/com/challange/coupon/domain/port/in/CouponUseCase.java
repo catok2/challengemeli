@@ -6,5 +6,5 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface CouponUseCase {
-    CouponResult calculateBestItems(List<String> itemIds, BigDecimal amount);
+    CouponResult calculateBestItems(List<String> itemIds, BigDecimal amount, String token);
 }

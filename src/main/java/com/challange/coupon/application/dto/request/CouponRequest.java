@@ -1,4 +1,4 @@
-package com.challange.coupon.application.dto;
+package com.challange.coupon.application.dto.request;
 
 import lombok.Data;
 

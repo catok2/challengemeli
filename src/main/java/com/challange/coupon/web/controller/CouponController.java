@@ -1,18 +1,15 @@
 package com.challange.coupon.web.controller;
 
 import com.challange.coupon.domain.port.in.CouponUseCase;
-import com.challange.coupon.application.dto.CouponRequest;
-import com.challange.coupon.application.dto.CouponResponse;
+import com.challange.coupon.application.dto.request.CouponRequest;
+import com.challange.coupon.application.dto.response.CouponResponse;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 @RestController
 @RequestMapping("/coupon")
@@ -51,9 +48,10 @@ public class CouponController {
                     description = "Solicitud de aplicación de cupón",
                     required = true,
                     content = @Content(schema = @Schema(implementation = CouponRequest.class)))
-            @RequestBody CouponRequest request) {
-
-        var result = couponUseCase.calculateBestItems(request.getItem_ids(), request.getAmount());
+            @RequestBody CouponRequest request,
+            @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        var result = couponUseCase.calculateBestItems(request.getItem_ids(), request.getAmount(), token);
         return new CouponResponse(result.getItemIds(), result.getTotal());
     }
 }

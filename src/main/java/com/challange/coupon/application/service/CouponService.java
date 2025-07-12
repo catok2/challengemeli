@@ -4,6 +4,7 @@ import com.challange.coupon.domain.model.CouponResult;
 import com.challange.coupon.domain.model.Item;
 import com.challange.coupon.domain.port.in.CouponUseCase;
 import com.challange.coupon.domain.port.out.PriceClientPort;
+import com.challange.coupon.domain.service.CouponDomainService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,37 +16,18 @@ import java.util.stream.Collectors;
 @Service
 public class CouponService implements CouponUseCase {
     private final PriceClientPort priceClientPort;
+    private final CouponDomainService CouponDomainService;
 
-    public CouponService(PriceClientPort priceClientPort) {
+    public CouponService(PriceClientPort priceClientPort, CouponDomainService couponDomainService) {
         this.priceClientPort = priceClientPort;
+        CouponDomainService = couponDomainService;
     }
 
-    // dado una lista de item_id y el monto total pueda darle la lista de ítems
-    //que maximice el total gastado.
+    // Optiene el precio de los items con el endpoint de mercadolibre https://api.mercadolibre.com/items .
+    // Utiliza el servicio de dominio para calcular y devolver los items optimos para el cupon.
     @Override
-    public CouponResult calculateBestItems(List<String> itemIds, BigDecimal amount) {
-        //Obtengo el precio de todos los items
-        List<Item> allItems = priceClientPort.getPrices(itemIds);
-
-        List<Item> sortedItems = allItems.stream()
-                .sorted(Comparator.comparing(Item::getPrice))
-                .collect(Collectors.toList());
-
-        //Array de items recomendados
-        List<String> selectedItems = new ArrayList<>();
-        BigDecimal total = BigDecimal.ZERO;
-
-        //voy agregando precio al total
-        for (Item item : sortedItems) {
-            if (total.add(item.getPrice()).compareTo(amount) <= 0) {
-                selectedItems.add(item.getIdItem());
-                total = total.add(item.getPrice());
-            }
-        }
-        List<String> orderedSelectedItems = itemIds.stream()
-                .filter(selectedItems::contains)
-                .collect(Collectors.toList());
-        // Devuelvo el array de items con el monto para el descuento.
-        return new CouponResult(orderedSelectedItems, total);
+    public CouponResult calculateBestItems(List<String> itemIds, BigDecimal amount, String token) {
+        List<Item> items = priceClientPort.getPrices(itemIds, token);
+        return CouponDomainService.calculateOptimalCoupon(items, amount);
     }
 }
