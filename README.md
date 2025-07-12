@@ -1,23 +1,3 @@
-# Mercado Libre Coupon API
-
-![Swagger UI](/docs/screenshot.png)
-
-## Documentación viva
-Accede a la UI interactiva en:
-`http://tu-host:8080/api-docs`
-
-## Configuración
-```yaml
-# application.yml.example
-springdoc:
-  swagger-ui:
-    enabled: true
-    path: /api-docs
-
-## 🧭 Diagrama de flujo de la API
-
-El siguiente diagrama describe cómo interactúan los componentes principales del sistema en operaciones comunes como obtener precios y agregar favoritos:
-
 ```mermaid
 sequenceDiagram
     participant Client as Cliente
@@ -44,5 +24,4 @@ sequenceDiagram
     API->>Counter: increment(MLA1)
     API->>Mongo: Escritura diferida
     API-->>Client: 200 OK
-
-
+```
