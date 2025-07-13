@@ -27,7 +27,7 @@ spring:
   
   data:
     mongodb:
-      uri: "mongodb+srv://alanguevaraco:P70wkLmUzD3YfMnB@mercado-libre-coupon.aikkox3.mongodb.net/meli-cupon?retryWrites=true&w=majority"
+      uri: "mongodb+srv://alanguevaraco:P70wkLmUzD3YfMnB@mercado-libre-coupon.aikkox3.mongodb.net/meli-cupon?retryWrites=true&w=majority&tls=true"
 
 springdoc:
   swagger-ui:
