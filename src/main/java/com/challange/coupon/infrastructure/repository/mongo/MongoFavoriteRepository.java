@@ -1,8 +1,10 @@
 package com.challange.coupon.infrastructure.repository.mongo;
 
+import com.challange.coupon.domain.exception.StatsException;
 import com.challange.coupon.domain.model.ItemFavoriteStats;
 import com.challange.coupon.domain.port.out.FavoriteItemRepositoryPort;
 import com.challange.coupon.infrastructure.repository.mongo.document.ItemFavoriteDocument;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,79 +15,118 @@ import org.springframework.stereotype.Repository;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-
-// En infrastructure/repository/mongodb/MongoFavoriteRepository.java
 @Repository
 public class MongoFavoriteRepository implements FavoriteItemRepositoryPort {
-
-
     private final MongoTemplate mongoTemplate;
-
     public MongoFavoriteRepository(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
+
     @Override
     public List<ItemFavoriteStats> findAll() {
-        return mongoTemplate.findAll(ItemFavoriteDocument.class)
-                .stream()
-                .map(doc -> new ItemFavoriteStats(doc.getItemId(), doc.getFavoriteCount()))
-                .collect(toList());
+        try{
+            List<ItemFavoriteStats> statsList = new ArrayList<>();
+            List<ItemFavoriteDocument> documents = mongoTemplate.findAll(ItemFavoriteDocument.class);
+
+            for (ItemFavoriteDocument doc : documents) {
+                ItemFavoriteStats stats = new ItemFavoriteStats(doc.getItemId(), doc.getFavoriteCount());
+                statsList.add(stats);
+            }
+            return statsList;
+            } catch (Exception e) {
+            throw new StatsException("Error al obtener todos los favoritos",
+                    StatsException.ErrorCode.DATABASE_ERROR, e);
+        }
     }
 
     @Override
     public List<ItemFavoriteStats> findTop5Favorites() {
-        Query query = new Query()
-                .with(Sort.by(Sort.Direction.DESC, "favoriteCount"))
-                .limit(5);
+        try {
+            List<ItemFavoriteStats> topFavorites = new ArrayList<>();
+            Query query = new Query();
+            query.with(Sort.by(Sort.Direction.DESC, "favoriteCount"));
+            query.limit(5);
+            List<ItemFavoriteDocument> documents = mongoTemplate.find(query, ItemFavoriteDocument.class);
 
-        return mongoTemplate.find(query, ItemFavoriteDocument.class)
-                .stream()
-                .map(doc -> new ItemFavoriteStats(doc.getItemId(), doc.getFavoriteCount()))
-                .collect(toList());
+            for (ItemFavoriteDocument doc : documents) {
+                ItemFavoriteStats stats = new ItemFavoriteStats(doc.getItemId(), doc.getFavoriteCount());
+                topFavorites.add(stats);
+            }
+            return topFavorites;
+        } catch (DataAccessException e) {
+            throw new StatsException("Error al obtener los top 5 favoritos",
+                    StatsException.ErrorCode.DATABASE_ERROR, e);
+        }
     }
 
     @Override
     public void save(ItemFavoriteStats stats) {
-        Query query = new Query(Criteria.where("itemId").is(stats.getItemId()));
-        Update update = new Update()
-                .set("favoriteCount", stats.getFavoriteCount())
-                .set("lastUpdated", LocalDateTime.now());
-        mongoTemplate.upsert(query, update, ItemFavoriteDocument.class);
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("itemId").is(stats.getItemId()));
+            Update update = new Update();
+            update.set("favoriteCount", stats.getFavoriteCount());
+            update.set("lastUpdated", LocalDateTime.now());
+
+            mongoTemplate.upsert(query, update, ItemFavoriteDocument.class);
+        } catch (DataAccessException e) {
+            throw new StatsException("Error al guardar estadísticas para item: " + stats.getItemId(),
+                    StatsException.ErrorCode.DATABASE_ERROR, e);
+        }
     }
 
     @Override
     public void incrementFavoriteCount(String itemId) {
-        Query query = new Query(Criteria.where("itemId").is(itemId));
-        Update update = new Update()
-                .inc("favoriteCount", 1)
-                .set("lastUpdated", LocalDateTime.now());
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("itemId").is(itemId));
+            Update update = new Update();
+            update.inc("favoriteCount", 1);
+            update.set("lastUpdated", LocalDateTime.now());
 
-        mongoTemplate.upsert(query, update, ItemFavoriteDocument.class);
+            mongoTemplate.upsert(query, update, ItemFavoriteDocument.class);
+        } catch (DataAccessException e) {
+            throw new StatsException("Error al incrementar favoritos para item: " + itemId,
+                    StatsException.ErrorCode.DATABASE_ERROR, e);
+        }
     }
 
     @Override
     public int incrementFavoriteCounts(String itemId) {
-        Query query = new Query(Criteria.where("_id").is(itemId));
-        Update update = new Update()
-                .inc("quantity", 1)
-                .set("lastUpdated", LocalDateTime.now());
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(itemId));
 
-        FindAndModifyOptions options = new FindAndModifyOptions()
-                .returnNew(true)
-                .upsert(true);
+            Update update = new Update();
+            update.inc("quantity", 1);
+            update.set("lastUpdated", LocalDateTime.now());
 
-        ItemFavoriteDocument updated = mongoTemplate.findAndModify(
-                query,
-                update,
-                options,
-                ItemFavoriteDocument.class
-        );
+            FindAndModifyOptions options = new FindAndModifyOptions();
+            options.returnNew(true);
+            options.upsert(true);
 
-        return updated != null ? updated.getFavoriteCount() : 1;
+            ItemFavoriteDocument updated = mongoTemplate.findAndModify(
+                    query,
+                    update,
+                    options,
+                    ItemFavoriteDocument.class
+            );
+
+            if (updated != null) {
+                return updated.getFavoriteCount();
+            } else {
+                return 1;
+            }
+        } catch (DataAccessException e) {
+            throw new StatsException("Error al incrementar contador de favoritos para item: " + itemId,
+                    StatsException.ErrorCode.DATABASE_ERROR, e);
+        }
     }
 
 }

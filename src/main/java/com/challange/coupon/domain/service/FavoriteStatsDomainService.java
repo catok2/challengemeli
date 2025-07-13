@@ -1,6 +1,5 @@
 package com.challange.coupon.domain.service;
 
-import com.challange.coupon.domain.model.ItemFavorite;
 import com.challange.coupon.domain.model.ItemFavoriteStats;
 import com.challange.coupon.domain.port.out.FavoriteItemRepositoryPort;
 import org.springframework.stereotype.Service;
@@ -18,10 +17,18 @@ public class FavoriteStatsDomainService {
     }
 
     public List<ItemFavoriteStats> getTop5ItemsByFavorites() {
-        List<ItemFavoriteStats> allStats = repository.findAll();
+       /* List<ItemFavoriteStats> allStats = repository.findAll();
         return allStats.stream()
                 .sorted(Comparator.comparingInt(ItemFavoriteStats::getFavoriteCount).reversed())
                 .limit(5)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+      return  repository.findTop5Favorites();
+    }
+
+    public int addFavoriteByUser(String itemId) {
+        return repository.incrementFavoriteCounts(itemId);
+    }
+    public void saveItemStats(ItemFavoriteStats stats) {
+        repository.save(stats);
     }
 }

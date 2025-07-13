@@ -1,3 +1,26 @@
+resilience4j:
+  circuitbreaker:
+    instances:
+      mercadoLibreApi:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+  retry:
+    instances:
+      mercadoLibreRetry:
+        maxAttempts: 3
+        waitDuration: 500ms
+        retryExceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException$ServiceUnavailable
+          - org.springframework.web.reactive.function.client.WebClientResponseException$GatewayTimeout
+
+
+
 spring:
   application:
     name: coupon

@@ -28,6 +28,6 @@ public class CouponService implements CouponUseCase {
     @Override
     public CouponResult calculateBestItems(List<String> itemIds, BigDecimal amount, String token) {
         List<Item> items = priceClientPort.getPrices(itemIds, token);
-        return CouponDomainService.calculateOptimalCoupon(items, amount);
+        return CouponDomainService.calculateBestCouponCombination(items, amount);
     }
 }

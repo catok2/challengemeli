@@ -1,41 +1,83 @@
 package com.challange.coupon.domain.service;
 
+import com.challange.coupon.domain.exception.CouponException;
+import com.challange.coupon.domain.exception.DomainException;
 import com.challange.coupon.domain.model.CouponResult;
 import com.challange.coupon.domain.model.Item;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CouponDomainService {
+    private final Cache<String, CouponResult> couponCache;
 
-    public CouponResult calculateOptimalCoupon(List<Item> items, BigDecimal maxAmount) {
-        List<Item> validItems = filterAndSortItems(items);
-        return selectItemsWithinBudget(validItems, maxAmount);
+    public CouponDomainService(Cache<String, CouponResult> couponCache) {
+        this.couponCache = couponCache;
     }
 
-    private List<Item> filterAndSortItems(List<Item> items) {
-        return items.stream()
-                .filter(item -> item.getPrice().compareTo(BigDecimal.ZERO) > 0)
-                .sorted(Comparator.comparing(Item::getPrice))
-                .collect(Collectors.toList());
+    public CouponResult calculateBestCouponCombination(List<Item> items, BigDecimal maxAmount) {
+       try{
+           validateInput(items, maxAmount);
+           List<Item> validItems = filterValidItems(items);
+           return findOptimalCombination(validItems, maxAmount);
+       }catch(DomainException e){
+           throw e;
+       }catch (Exception e) {
+           throw new CouponException("Error inesperado en cálculo de cupón :" + e ,
+                                    CouponException.ErrorCode.CALCULATION_ERROR , e);
+       }
     }
 
-    private CouponResult selectItemsWithinBudget(List<Item> items, BigDecimal maxAmount) {
-        List<String> selectedIds = new ArrayList<>();
-        BigDecimal total = BigDecimal.ZERO;
-
+    private List<Item> filterValidItems(List<Item> items) {
+        List<Item> validItems = new ArrayList<>();
         for (Item item : items) {
-            BigDecimal newTotal = total.add(item.getPrice());
-            if (newTotal.compareTo(maxAmount) <= 0) {
-                selectedIds.add(item.getIdItem());
-                total = newTotal;
+            if (item.getPrice() == null) {
+                throw new CouponException(
+                        "El ítem " + item.getIdItem() + " no tiene precio",
+                        CouponException.ErrorCode.ITEM_NOT_FOUND
+                );
+            }
+            if (item.getPrice().compareTo(BigDecimal.ZERO) > 0) {
+                validItems.add(item);
             }
         }
-        return new CouponResult(selectedIds, total);
+        validItems.sort(Comparator.comparing(Item::getPrice));
+        return validItems;
+    }
+
+    private CouponResult findOptimalCombination(List<Item> items, BigDecimal maxAmount) {
+        List<String> itemsSeleccionados = new ArrayList<>();
+        BigDecimal totalAcumulado = BigDecimal.ZERO;
+        for (Item item : items) {
+            BigDecimal precioItem = item.getPrice();
+            BigDecimal posibleTotal = totalAcumulado.add(precioItem);
+            if (posibleTotal.compareTo(maxAmount) <= 0) {
+                itemsSeleccionados.add(item.getIdItem());
+                totalAcumulado = posibleTotal;
+            } else {
+                break;
+            }
+        }
+        if (itemsSeleccionados.isEmpty()) {
+            throw new CouponException(
+                    "No hay combinación válida para el monto especificado",
+                    CouponException.ErrorCode.NO_VALID_COMBINATION
+            );
+        }
+        return new CouponResult(itemsSeleccionados, totalAcumulado);
+    }
+
+    private void validateInput(List<Item> items, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new CouponException(
+                    "El monto debe ser positivo",
+                    CouponException.ErrorCode.INVALID_AMOUNT
+            );
+        }
     }
 }

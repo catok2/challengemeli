@@ -2,7 +2,7 @@ package com.challange.coupon.web.controller;
 
 import com.challange.coupon.application.dto.request.FavoriteRequest;
 import com.challange.coupon.application.dto.response.FavoriteResponse;
-import com.challange.coupon.application.service.FavoriteService;
+import com.challange.coupon.application.service.FavoriteUserService;
 import com.challange.coupon.application.service.FavoriteStatsService;
 import com.challange.coupon.domain.model.ItemFavoriteStats;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +15,11 @@ import java.util.List;
 public class StatsController {
 
     private final FavoriteStatsService favoriteStatsService;
-    private final FavoriteService favoriteService;
+    private final FavoriteUserService favoriteUserService;
 
-    public StatsController(FavoriteStatsService favoriteStatsService, FavoriteService favoriteService) {
+    public StatsController(FavoriteStatsService favoriteStatsService, FavoriteUserService favoriteUserService) {
         this.favoriteStatsService = favoriteStatsService;
-        this.favoriteService = favoriteService;
+        this.favoriteUserService = favoriteUserService;
     }
 
     @GetMapping("stats/favorites")
@@ -31,7 +31,7 @@ public class StatsController {
     public ResponseEntity<FavoriteResponse> addFavorite(
             @RequestBody FavoriteRequest request
     ) {
-        FavoriteResponse response = favoriteService.addFavorite(
+        FavoriteResponse response = favoriteUserService.addFavorite(
                 request.getUserId(),
                 request.getItemId()
         );

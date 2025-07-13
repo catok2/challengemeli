@@ -19,5 +19,14 @@ public class ItemFavoriteDocument {
 
     private LocalDateTime lastUpdated;
 
+    // Constructor sin argumentos (necesario para MongoDB)
+    public ItemFavoriteDocument() {}
+
+    // Constructor con parámetros
+    public ItemFavoriteDocument(String itemId, int favoriteCount) {
+        this.itemId = itemId;
+        this.favoriteCount = favoriteCount;
+        this.lastUpdated = LocalDateTime.now();
+    }
 
 }

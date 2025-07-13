@@ -1,6 +1,5 @@
 package com.challange.coupon.application.service;
 
-import com.challange.coupon.domain.model.ItemFavorite;
 import com.challange.coupon.domain.model.ItemFavoriteStats;
 import com.challange.coupon.domain.service.FavoriteStatsDomainService;
 import org.springframework.stereotype.Service;

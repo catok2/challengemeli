@@ -8,8 +8,7 @@ import lombok.Data;
 @Data
 public class ItemFavoriteStats {
     private String itemId;
-    private int favoriteCount; // Cantidad de usuarios que lo marcaron como favorito
-
+    private int favoriteCount;
     public void incrementCount() {
         this.favoriteCount++;
     }
