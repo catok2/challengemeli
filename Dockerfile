@@ -19,8 +19,9 @@ WORKDIR /app
 
 # ✅ Instalar certificados y utilidades necesarias para MongoDB Atlas (SRV y TLS)
 RUN apt-get update && \
-    apt-get install -y ca-certificates netbase dnsutils && \
-    update-ca-certificates
+    apt-get install -y ca-certificates openssl && \
+    update-ca-certificates -f
+
 
 # Copiar el JAR generado desde la etapa anterior
 COPY --from=build /app/target/coupon-0.0.1-SNAPSHOT.jar app.jar
