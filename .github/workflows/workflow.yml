@@ -43,7 +43,7 @@ jobs:
           pkill -f 'java.*spring-boot'
 
       - name: Upload API documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: api-docs
           path: docs/openapi.json

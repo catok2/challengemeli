@@ -115,3 +115,40 @@ sequenceDiagram
     
     StatsController-->>Cliente: 200 OK
 ```
+
+## Ejemplos de Uso - API de Cupones
+
+### Request Ejemplo:
+```json
+POST /coupon
+Content-Type: application/json
+Authorization: Bearer tu_token (TOKEN DE MERCADOLIBRE)
+
+{
+  "item_ids": ["MLA1", "MLA2", "MLA3", "MLA4", "MLA5"],
+  "amount": 500
+}
+```
+## 📌 Estructura del Proyecto (Niveles 1, 2 y 3)
+```text
+📁 src/
+├─ 📁 main/
+│  ├─ 📁 java/
+│  │  └─ 📁 com/challange/coupon/
+│  │     ├─ 📁 application/       # Controllers y DTOs (Niveles 1-2)
+│  │     │  ├─ 📁 dto/
+│  │     │  ├─ 📁 service/
+│  │     │  └─ 📁 exception/
+│  │     ├─ 📁 domain/            # Lógica de negocio (Nivel 1)
+│  │     │  ├─ 📁 model/
+│  │     │  ├─ 📁 port/
+│  │     │  └─ 📁 service/
+│  │     └─ 📁 infrastructure/    # Implementaciones (Nivel 3)
+│  │        ├─ 📁 client/         # API MercadoLibre
+│  │        ├─ 📁 repository/     # MongoDB
+│  │        └─ 📁 config/         # Cache/Resilience/etc
+│  └─ 📁 resources/
+│     ├─ 📄 application.yml       # Config principal
+│     └─ 📄 application-dev.yml   # Config desarrollo
+
+```
