@@ -7,7 +7,9 @@ import com.challange.coupon.application.service.FavoriteUserService;
 import com.challange.coupon.application.service.FavoriteStatsService;
 import com.challange.coupon.domain.model.ItemFavoriteStats;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,12 +31,27 @@ public class StatsController {
         this.favoriteUserService = favoriteUserService;
     }
     // Nivel 2:
-    @Operation(summary = "Obtener top 5 items favoritos",
-            description = "Devuelve los 5 items más marcados como favoritos")
+    @Operation(
+            summary = "Obtener top 5 items favoritos",
+            description = "Devuelve los 5 items más marcados como favoritos"
+    )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista obtenida",
-                    content = @Content(schema = @Schema(implementation = ItemFavoriteStats[].class))),
-            @ApiResponse(responseCode = "500", description = "Error interno")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista obtenida",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ItemFavoriteStats.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     @GetMapping("/stats")
     public List<ItemFavoriteStats> stats() {
@@ -44,16 +61,66 @@ public class StatsController {
     @Operation(summary = "Agregar ítem a favoritos",
             description = "Registra un ítem como favorito para un usuario")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Ítem agregado a favoritos",
-                    content = @Content(schema = @Schema(implementation = FavoriteResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "409", description = "El ítem ya está en favoritos",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Error al procesar la solicitud",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ítem agregado a favoritos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = FavoriteResponse.class),
+                            examples = @ExampleObject(value = """
+                {
+                  "message": "Ítem agregado exitosamente",
+                  "newFavoriteCount": 10
+                }
+            """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Datos de entrada inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = """
+                {
+                  "code": "INVALID_REQUEST",
+                  "message": "El campo item_id es obligatorio",
+                  "itemId": null
+                }
+            """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "El ítem ya está en favoritos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = """
+                {
+                  "code": "DUPLICATE_ITEM",
+                  "message": "El ítem MLA123 ya está registrado como favorito",
+                  "itemId": "MLA123"
+                }
+            """)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error al procesar la solicitud",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = """
+                {
+                  "code": "GENERIC-ERROR",
+                  "message": "Error interno del servidor",
+                  "itemId": null
+                }
+            """)
+                    )
+            )
     })
-
     // Nivel 2: Complementa para acumular favoritos
     @PostMapping("/user/favorite")
     public ResponseEntity<FavoriteResponse> addFavorite(
