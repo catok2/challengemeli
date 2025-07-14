@@ -54,14 +54,7 @@ public class CacheConfig {
                 .expireAfterWrite(1, TimeUnit.HOURS)
                 .build();
     }
-    @Bean
-    public Cache<String, ItemFavoriteStats> itemStatsCache() {
-        return Caffeine.newBuilder()
-                .maximumSize(10_000)
-                .expireAfterWrite(1, TimeUnit.HOURS)
-                .recordStats()
-                .build();
-    }
+
 
     @Bean
     public Cache<String, List<ItemFavoriteStats>> top5FavoritesCache() {

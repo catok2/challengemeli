@@ -27,16 +27,10 @@ spring:
   
   data:
     mongodb:
-      uri: "mongodb+srv://alanguevaraco:P70wkLmUzD3YfMnB@mercado-libre-coupon.aikkox3.mongodb.net/meli-cupon?retryWrites=true&w=majority&ssl=true"
+      uri:  ${SPRING_DATA_MONGODB_URI}
 springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
-
-ml:
-  app:
-    client_id: 6437969218645616
-    client_secret: 4bllPbVNJcRA1QZX4PxYyJZHcDF9aZQY
-    redirect_uri: https://dashboard.render.com/
