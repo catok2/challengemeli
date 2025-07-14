@@ -28,21 +28,7 @@ public class StatsController {
         this.favoriteStatsService = favoriteStatsService;
         this.favoriteUserService = favoriteUserService;
     }
-    /*
-    @Operation(summary = "Obtener top favoritos",
-            description = "Retorna los 5 ítems más marcados como favoritos")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista obtenida",
-                    content = @Content(schema = @Schema(implementation = ItemFavoriteStats[].class))),
-            @ApiResponse(responseCode = "500", description = "Error de base de datos",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @GetMapping("stats/favorites")
-    public List<ItemFavoriteStats> getFavoriteStats() {
-      return favoriteStatsService.getTop5Favorites();
-    }
-
-     */
+    // Nivel 2:
     @Operation(summary = "Obtener top 5 items favoritos",
             description = "Devuelve los 5 items más marcados como favoritos")
     @ApiResponses({
@@ -54,18 +40,6 @@ public class StatsController {
     public List<ItemFavoriteStats> stats() {
         return favoriteStatsService.getTop5Favorites();
     }
-
-    /*
-    @PostMapping("user/favorite")
-    public ResponseEntity<FavoriteResponse> addFavorite(
-            @RequestBody FavoriteRequest request
-    ) {
-        FavoriteResponse response = favoriteUserService.addFavorite(
-                request.getUserId(),
-                request.getItemId()
-        );
-        return ResponseEntity.ok(response);
-    }*/
 
     @Operation(summary = "Agregar ítem a favoritos",
             description = "Registra un ítem como favorito para un usuario")
@@ -79,6 +53,8 @@ public class StatsController {
             @ApiResponse(responseCode = "500", description = "Error al procesar la solicitud",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
+
+    // Nivel 2: Complementa para acumular favoritos
     @PostMapping("/user/favorite")
     public ResponseEntity<FavoriteResponse> addFavorite(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(

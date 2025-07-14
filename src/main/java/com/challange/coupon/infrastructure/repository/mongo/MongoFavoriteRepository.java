@@ -12,17 +12,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
-
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 @Repository
 public class MongoFavoriteRepository implements FavoriteItemRepositoryPort {
     private final MongoTemplate mongoTemplate;
+    private List<ItemFavoriteStats> top5Cache = null;
     public MongoFavoriteRepository(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
@@ -47,17 +44,23 @@ public class MongoFavoriteRepository implements FavoriteItemRepositoryPort {
 
     @Override
     public List<ItemFavoriteStats> findTop5Favorites() {
+        if (top5Cache != null) {
+            return top5Cache;
+        }
+
         try {
             List<ItemFavoriteStats> topFavorites = new ArrayList<>();
             Query query = new Query();
             query.with(Sort.by(Sort.Direction.DESC, "favoriteCount"));
             query.limit(5);
+
             List<ItemFavoriteDocument> documents = mongoTemplate.find(query, ItemFavoriteDocument.class);
 
             for (ItemFavoriteDocument doc : documents) {
                 ItemFavoriteStats stats = new ItemFavoriteStats(doc.getItemId(), doc.getFavoriteCount());
                 topFavorites.add(stats);
             }
+            this.top5Cache = topFavorites;
             return topFavorites;
         } catch (DataAccessException e) {
             throw new StatsException("Error al obtener los top 5 favoritos",
@@ -75,6 +78,7 @@ public class MongoFavoriteRepository implements FavoriteItemRepositoryPort {
             update.set("lastUpdated", LocalDateTime.now());
 
             mongoTemplate.upsert(query, update, ItemFavoriteDocument.class);
+            this.top5Cache = null;
         } catch (DataAccessException e) {
             throw new StatsException("Error al guardar estadísticas para item: " + stats.getItemId(),
                     StatsException.ErrorCode.DATABASE_ERROR, e);
@@ -91,6 +95,7 @@ public class MongoFavoriteRepository implements FavoriteItemRepositoryPort {
             update.set("lastUpdated", LocalDateTime.now());
 
             mongoTemplate.upsert(query, update, ItemFavoriteDocument.class);
+            this.top5Cache = null;
         } catch (DataAccessException e) {
             throw new StatsException("Error al incrementar favoritos para item: " + itemId,
                     StatsException.ErrorCode.DATABASE_ERROR, e);
@@ -117,7 +122,7 @@ public class MongoFavoriteRepository implements FavoriteItemRepositoryPort {
                     options,
                     ItemFavoriteDocument.class
             );
-
+            this.top5Cache = null;
             if (updated != null) {
                 return updated.getFavoriteCount();
             } else {

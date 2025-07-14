@@ -13,7 +13,7 @@ public class FavoriteStatsService  {
     public FavoriteStatsService(FavoriteStatsDomainService statsDomainService) {
         this.statsDomainService = statsDomainService;
     }
-
+   // ENVIO LA LOGICA AL DOMAIN PARA OPTENER LOS 5 FAVORITOS
     public List<ItemFavoriteStats> getTop5Favorites() {
         return statsDomainService.getTop5ItemsByFavorites();
     }

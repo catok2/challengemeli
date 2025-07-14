@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
-// En infrastructure/repository/mongodb/document/FavoriteDocument.java
 @AllArgsConstructor
 @Data
 @Document(collection = "user_favorites")

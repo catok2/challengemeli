@@ -1,6 +1,6 @@
 package com.challange.coupon.infrastructure.client;
 
-import com.challange.coupon.domain.exception.CouponException;
+
 import com.challange.coupon.domain.exception.ItemException;
 import com.challange.coupon.domain.model.Item;
 import com.challange.coupon.domain.port.out.PriceClientPort;
@@ -36,7 +36,10 @@ public class MercadoLibrePriceClient implements PriceClientPort {
         }
         return items;
     }
-
+    //Encargada de optener el precio de los items
+    // Primero verifica si el precio esta en cache si no esta le pega a la api
+    // se utiliza Resilience4j por si falla la api de meli en caso de fallar
+    // setea el precio en 0 , despues es filtrado
     @CircuitBreaker(name = "mercadoLibreApi", fallbackMethod = "getItemPriceFallback")
     @Retry(name = "mercadoLibreRetry", fallbackMethod = "getItemPriceFallback")
     private Item getItemPrice(String itemId, String token) {

@@ -1,6 +1,5 @@
 package com.challange.coupon.web.controller;
 
-import com.challange.coupon.application.dto.response.ErrorResponse;
 import com.challange.coupon.domain.port.in.CouponUseCase;
 import com.challange.coupon.application.dto.request.CouponRequest;
 import com.challange.coupon.application.dto.response.CouponResponse;
@@ -21,37 +20,9 @@ public class CouponController {
     public CouponController(CouponUseCase couponUseCase) {
         this.couponUseCase = couponUseCase;
     }
-    /*
-    @Operation(summary = "Aplicar cupón",
-            description = "Calcula la mejor combinación de ítems para un cupón")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cálculo exitoso",
-                    content = @Content(schema = @Schema(implementation = CouponResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Solicitud inválida",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Ítem no encontrado",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "422", description = "Precio inválido",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "502", description = "Error en API externa",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
 
-    @PostMapping
-    public CouponResponse applyCoupon(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Solicitud de aplicación de cupón",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = CouponRequest.class)))
-            @RequestBody CouponRequest request,
-            @RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
-        var result = couponUseCase.calculateBestItems(request.getItem_ids(), request.getAmount(), token);
-        return new CouponResponse(result.getItemIds(), result.getTotal());
-    }*/
 
-    // Nivel 1: Endpoint exacto como se solicita
+    // Nivel 1:
     @Operation(summary = "Calcular items óptimos para cupón",
             description = "Devuelve la combinación de items que maximiza el uso del cupón")
     @ApiResponses({

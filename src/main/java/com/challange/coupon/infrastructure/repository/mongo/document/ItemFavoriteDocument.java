@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Document(collection = "item_favorites")
-public class ItemFavoriteDocument {
+    public class ItemFavoriteDocument {
     @Id
     private String id;
     @Field("item_id")
@@ -22,7 +22,6 @@ public class ItemFavoriteDocument {
     // Constructor sin argumentos (necesario para MongoDB)
     public ItemFavoriteDocument() {}
 
-    // Constructor con parámetros
     public ItemFavoriteDocument(String itemId, int favoriteCount) {
         this.itemId = itemId;
         this.favoriteCount = favoriteCount;

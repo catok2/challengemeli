@@ -19,10 +19,12 @@ public class CouponDomainService {
     public CouponDomainService(Cache<String, CouponResult> couponCache) {
         this.couponCache = couponCache;
     }
-
+    // valida el monto primero.
+    // despues valida los items.
+    // despues de la validacion optiene la mejor combinacion
     public CouponResult calculateBestCouponCombination(List<Item> items, BigDecimal maxAmount) {
        try{
-           validateInput(items, maxAmount);
+           validateInput( maxAmount);
            List<Item> validItems = filterValidItems(items);
            return findOptimalCombination(validItems, maxAmount);
        }catch(DomainException e){
@@ -33,6 +35,8 @@ public class CouponDomainService {
        }
     }
 
+    // Si la api de meli falla y no esta el precio en cache , seteando el item en 0
+    // aca lo filtro para no tenerlo encuenta en la combinacion
     private List<Item> filterValidItems(List<Item> items) {
         List<Item> validItems = new ArrayList<>();
         for (Item item : items) {
@@ -72,7 +76,8 @@ public class CouponDomainService {
         return new CouponResult(itemsSeleccionados, totalAcumulado);
     }
 
-    private void validateInput(List<Item> items, BigDecimal amount) {
+
+    private void validateInput( BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new CouponException(
                     "El monto debe ser positivo",

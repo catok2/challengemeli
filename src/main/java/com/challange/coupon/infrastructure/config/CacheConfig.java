@@ -1,6 +1,7 @@
 package com.challange.coupon.infrastructure.config;
 
 import com.challange.coupon.domain.model.CouponResult;
+import com.challange.coupon.domain.model.ItemFavoriteStats;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.annotation.EnableCaching;
@@ -51,6 +52,23 @@ public class CacheConfig {
         return Caffeine.newBuilder()
                 .maximumSize(10_000) // Capacidad para 10k combinaciones
                 .expireAfterWrite(1, TimeUnit.HOURS)
+                .build();
+    }
+    @Bean
+    public Cache<String, ItemFavoriteStats> itemStatsCache() {
+        return Caffeine.newBuilder()
+                .maximumSize(10_000)
+                .expireAfterWrite(1, TimeUnit.HOURS)
+                .recordStats()
+                .build();
+    }
+
+    @Bean
+    public Cache<String, List<ItemFavoriteStats>> top5FavoritesCache() {
+        return Caffeine.newBuilder()
+                .maximumSize(100)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .recordStats()
                 .build();
     }
 

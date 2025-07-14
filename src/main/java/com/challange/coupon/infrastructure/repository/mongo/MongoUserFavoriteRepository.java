@@ -10,7 +10,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +21,8 @@ public class MongoUserFavoriteRepository implements UserFavoriteRepositoryPort {
         this.mongoTemplate = mongoTemplate;
         this.userFavoritesCache = userFavoritesCache;
     }
-
-
-
+    //Inseta el favorito en mongo, y verifica si esta en cache, si no lo agrega, agiliza
+    // al consultar favoritos por usuarios
     @Override
     public void addFavoriteByUser(String userId, String itemId) {
         try {
@@ -46,13 +44,4 @@ public class MongoUserFavoriteRepository implements UserFavoriteRepositoryPort {
         }
     }
 
-    @Override
-    public boolean existsByUserAndItem(String userId, String itemId) {
-        return false;
-    }
-
-    @Override
-    public List<String> findFavoritesByUser(String userId) {
-        return List.of();
-    }
 }

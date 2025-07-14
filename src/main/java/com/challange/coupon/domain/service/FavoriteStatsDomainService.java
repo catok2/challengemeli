@@ -15,13 +15,9 @@ public class FavoriteStatsDomainService {
     public FavoriteStatsDomainService(FavoriteItemRepositoryPort repository) {
         this.repository = repository;
     }
-
+    // obtengo el top 5 de los items favoritos del repositorio de mongo para darle
+    // mejor velocidad
     public List<ItemFavoriteStats> getTop5ItemsByFavorites() {
-       /* List<ItemFavoriteStats> allStats = repository.findAll();
-        return allStats.stream()
-                .sorted(Comparator.comparingInt(ItemFavoriteStats::getFavoriteCount).reversed())
-                .limit(5)
-                .collect(Collectors.toList());*/
       return  repository.findTop5Favorites();
     }
 
