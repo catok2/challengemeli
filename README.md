@@ -10,6 +10,13 @@ API REST diseñada para Mercado Libre que resuelve tres desafíos principales:
 1. Cálculo óptimo de items para cupones de compra
 2. Gestión y estadísticas de items favoritos
 3. Arquitectura escalable para alto tráfico (hasta 100K RPM)
+## 🌟 Características por Nivel
+| Nivel | Funcionalidad                     | Endpoints                     |
+|-------|-----------------------------------|-------------------------------|
+| 1     | Cálculo de cupones                | `POST /coupon`                |
+| 2     | Gestión de favoritos + stats      | `GET /stats`, `POST /favorite`|
+| 3     | Escalabilidad en la nube          | Hosteado en Render            |
+
 
 **🔗 URL de Producción**: [https://challengemeli-t3rt.onrender.com](https://challengemeli-t3rt.onrender.com)  
 **📚 Documentación Swagger**: [https://challengemeli-t3rt.onrender.com/swagger-ui/index.html](https://challengemeli-t3rt.onrender.com/swagger-ui/index.html)
@@ -152,3 +159,23 @@ Authorization: Bearer tu_token (TOKEN DE MERCADOLIBRE)
 │     └─ 📄 application-dev.yml   # Config desarrollo
 
 ```
+
+
+## 🚀 Instrucciones de Ejecución
+
+### 📋 Requisitos Previos
+- **Java JDK 21** ([Descargar](https://jdk.java.net/21/))
+- **Maven 3.8+** ([Instalar](https://maven.apache.org/install.html))
+- **MongoDB 5.0+** ([Configurar](https://www.mongodb.com/docs/manual/installation/))
+
+### 🔧 Configuración Inicial
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/catok2/challengemeli.git
+   cd coupon-api
+
+### 1. Configurar MongoDB
+Crea un archivo `.env` en la raíz del proyecto con:
+
+```bash
+echo "SPRING_DATA_MONGODB_URI=mongodb+srv://alanguevaraco:P70wkLmUzD3YfMnB@mercado-libre-coupon.aikkox3.mongodb.net/meli-cupon?retryWrites=true&w=majority&ssl=true" > .env
