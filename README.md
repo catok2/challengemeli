@@ -1,3 +1,45 @@
+# Coupon API para Mercado Libre
+
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.7-green.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://openjdk.org/projects/jdk/21/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-5.0+-green.svg)](https://www.mongodb.com/)
+
+## Descripción General
+
+API REST diseñada para Mercado Libre que resuelve tres desafíos principales:
+1. Cálculo óptimo de items para cupones de compra
+2. Gestión y estadísticas de items favoritos
+3. Arquitectura escalable para alto tráfico (hasta 100K RPM)
+
+**🔗 URL de Producción**: [https://challengemeli-t3rt.onrender.com](https://challengemeli-t3rt.onrender.com)  
+**📚 Documentación Swagger**: [https://challengemeli-t3rt.onrender.com/swagger-ui/index.html](https://challengemeli-t3rt.onrender.com/swagger-ui/index.html)
+
+## Tecnologías Principales
+
+| Tecnología       | Uso                                                                 |
+|------------------|---------------------------------------------------------------------|
+| Java 21          | Lenguaje base del proyecto                                          |
+| Spring Boot 3.4.7| Framework principal para la API REST                                |
+| MongoDB          | Almacenamiento de items favoritos y estadísticas                   |
+| Caffeine         | Sistema de caching en memoria para mejorar rendimiento             |
+| Resilience4j     | Implementación de Circuit Breaker para llamadas externas           |
+| WebClient        | Cliente HTTP reactivo para consumir API de MercadoLibre            |
+| SpringDoc        | Generación automática de documentación OpenAPI/Swagger             |
+
+## Patrones de Diseño Implementados
+
+### 1. Arquitectura Hexagonal
+```mermaid
+graph TD
+    A[Controllers] --> B(Use Cases)
+    B --> C[Domain Services]
+    C --> D[Ports]
+    D --> E[Adapters]
+    E --> F[(MongoDB)]
+    E --> G[API MercadoLibre]
+```
+
+### 1. Diagrama de  Secuencia
 ```mermaid
 sequenceDiagram
     participant Cliente
