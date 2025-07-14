@@ -174,8 +174,12 @@ Authorization: Bearer tu_token (TOKEN DE MERCADOLIBRE)
    git clone https://github.com/catok2/challengemeli.git
    cd coupon-api
 
-### 1. Configurar MongoDB
-Crea un archivo `.env` en la raíz del proyecto con:
+### 1. 🔧Configurar MongoDB
+2. Crea un archivo `.env` en la raíz del proyecto con:
 
-```bash
+ ```bash
 echo "SPRING_DATA_MONGODB_URI=mongodb+srv://alanguevaraco:P70wkLmUzD3YfMnB@mercado-libre-coupon.aikkox3.mongodb.net/meli-cupon?retryWrites=true&w=majority&ssl=true" > .env
+```
+### 2. 🚀Ejecucion del proyecto 
+    mvn spring-boot:run
+
