@@ -34,12 +34,7 @@ public class CouponController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CouponResponse.class),
-                            examples = @ExampleObject(value = """
-                {
-                  "item_ids": ["MLA123", "MLA456"],
-                  "total": 1500.0
-                }
-            """)
+                            examples = @ExampleObject(value = "{ \"item_ids\": [\"MLA123\", \"MLA456\"], \"total\": 1500.0 }")
                     )
             ),
             @ApiResponse(
@@ -48,13 +43,7 @@ public class CouponController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = """
-                {
-                  "code": "INVALID_REQUEST",
-                  "message": "El campo 'amount' debe ser mayor a cero",
-                  "itemId": null
-                }
-            """)
+                            examples = @ExampleObject(value ="{ \"code\": \"INVALID_REQUEST\", \"message\": \"El campo 'amount' debe ser mayor a cero\", \"itemId\": null }")
                     )
             ),
             @ApiResponse(
@@ -63,13 +52,7 @@ public class CouponController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = """
-                {
-                  "code": "CALCULATION_ERROR",
-                  "message": "Error al calcular la combinación óptima",
-                  "itemId": null
-                }
-            """)
+                            examples = @ExampleObject(value = "{ \"code\": \"CALCULATION_ERROR\", \"message\": \"Error al calcular la combinación óptima\", \"itemId\": null }")
                     )
             )
     })

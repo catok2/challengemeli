@@ -67,12 +67,9 @@ public class StatsController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = FavoriteResponse.class),
-                            examples = @ExampleObject(value = """
-                {
-                  "message": "Ítem agregado exitosamente",
-                  "newFavoriteCount": 10
-                }
-            """)
+                            examples = @ExampleObject(name = "AddFavoriteSuccess",
+                                    summary = "Respuesta exitosa al agregar favorito",
+                                    value = "{ \"message\": \"Ítem agregado exitosamente\", \"newFavoriteCount\": 10 }")
                     )
             ),
             @ApiResponse(
@@ -81,13 +78,10 @@ public class StatsController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = """
-                {
-                  "code": "INVALID_REQUEST",
-                  "message": "El campo item_id es obligatorio",
-                  "itemId": null
-                }
-            """)
+                            examples = @ExampleObject(name = "InvalidItemIdRequest",
+                                    summary = "Falta el campo item_id",
+                                    value = "{ \"code\": \"INVALID_REQUEST\", \"message\": \"El campo item_id es obligatorio\", \"itemId\": null }"
+                            )
                     )
             ),
             @ApiResponse(
@@ -96,13 +90,9 @@ public class StatsController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = """
-                {
-                  "code": "DUPLICATE_ITEM",
-                  "message": "El ítem MLA123 ya está registrado como favorito",
-                  "itemId": "MLA123"
-                }
-            """)
+                            examples = @ExampleObject(name = "DuplicateItemExample",
+                                    summary = "El ítem ya está marcado como favorito",
+                                    value = "{ \"code\": \"DUPLICATE_ITEM\", \"message\": \"El ítem MLA123 ya está registrado como favorito\", \"itemId\": \"MLA123\" }")
                     )
             ),
             @ApiResponse(
@@ -111,13 +101,9 @@ public class StatsController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = """
-                {
-                  "code": "GENERIC-ERROR",
-                  "message": "Error interno del servidor",
-                  "itemId": null
-                }
-            """)
+                            examples = @ExampleObject(name = "GenericErrorExample",
+                                    summary = "Error genérico del servidor",
+                                    value = "{ \"code\": \"GENERIC-ERROR\", \"message\": \"Error interno del servidor\", \"itemId\": null }")
                     )
             )
     })
